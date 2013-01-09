@@ -75,7 +75,7 @@ module SimpleCapistranoUnicorn
           # Starts the unicorn servers
           desc "Starts the unicorn server without cleaning up from the previous instance"
           task :start_without_cleanup, :roles => :app do
-            run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env} #{"-p #{unicorn_port}" if unicorn_port} -D"
+            run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env}#{" -p #{unicorn_port}" if unicorn_port} -D"
           end
 
           #
