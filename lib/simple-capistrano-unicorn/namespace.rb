@@ -20,7 +20,7 @@ module SimpleCapistranoUnicorn
           _cset(:unicorn_old_pid) { "#{shared_path}/pids/unicorn.pid.oldbin" }
           _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
           _cset(:unicorn_socket)  { "#{shared_path}/system/unicorn.sock" }
-          _cset(:unicorn_port)    { 3000 }
+          _cset(:unicorn_port)    { '3000' }
           _cset(:use_bundler)     { true }
           _cset(:rails_env)       { "production" }
         end
@@ -75,7 +75,7 @@ module SimpleCapistranoUnicorn
           # Starts the unicorn servers
           desc "Starts the unicorn server without cleaning up from the previous instance"
           task :start_without_cleanup, :roles => :app do
-            run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env} -p #{"#{unicorn_port}"} -D"
+            run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env} #{"-p #{unicorn_port}" if unicorn_port} -D"
           end
 
           #
