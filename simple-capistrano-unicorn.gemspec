@@ -18,9 +18,8 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_development_dependency "shell-spinner"
   gem.add_development_dependency "rake"
-  
+
   gem.add_runtime_dependency "unicorn"
   gem.add_runtime_dependency 'capistrano'
 end
