@@ -117,5 +117,5 @@ module SimpleCapistranoUnicorn
 end
 
 if Capistrano::Configuration.instance
-  CapistranoUnicorn::CapistranoIntegration.load_into(Capistrano::Configuration.instance)
+  SimpleCapistranoUnicorn::CapistranoIntegration.load_into(Capistrano::Configuration.instance)
 end
