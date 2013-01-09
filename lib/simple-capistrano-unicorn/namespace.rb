@@ -15,7 +15,7 @@ module SimpleCapistranoUnicorn
     def self.load_into(capistrano_config)
       capistrano_config.load do
         before(CapistranoIntegration::TASKS) do
-          # Defaulting these variables, because they could end up not being defined in deploy.rb 
+          # Defaulting these variables, because they could end up not being defined in deploy.rb.
           _cset(:unicorn_pid)     { "#{shared_path}/pids/unicorn.pid" }
           _cset(:unicorn_old_pid) { "#{shared_path}/pids/unicorn.pid.oldbin" }
           _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
@@ -23,6 +23,13 @@ module SimpleCapistranoUnicorn
           _cset(:unicorn_port)    { '3000' }
           _cset(:use_bundler)     { true }
           _cset(:rails_env)       { "production" }
+        end
+
+        # Command to check if Unicorn is running.
+        #
+        def unicorn_is_running?(server)
+          #remote_process_exists?(unicorn_pid)
+          'running' == capture("ps cax | grep `cat #{unicorn_pid}` > /dev/null; if [ $? -eq 0 ]; then echo running; fi", :hosts => [server])
         end
 
         namespace :unicorn do
@@ -34,7 +41,6 @@ module SimpleCapistranoUnicorn
           #   end
           # end
 
-          #
           # Starts the unicorn process(es)
           #
           desc "Starts unicorn"
@@ -45,7 +51,6 @@ module SimpleCapistranoUnicorn
             end
           end
 
-          #
           # This will quit the unicorn process(es).
           #
           desc "Stop unicorn"
@@ -57,9 +62,8 @@ module SimpleCapistranoUnicorn
             end
           end
 
-          #
           # Restarts the unicorn process(es) with the URS2 code, to gracefully
-          # create a new server, and kill of the old one, leaving *no* downtime
+          # create a new server, and kill of the old one, leaving *no* downtime.
           #
           desc "Zero-downtime restart of Unicorn"
           task :restart do
@@ -71,27 +75,29 @@ module SimpleCapistranoUnicorn
             end
           end
 
+          # Starts the unicorn servers.
           #
-          # Starts the unicorn servers
           desc "Starts the unicorn server without cleaning up from the previous instance"
           task :start_without_cleanup, :roles => :app do
             run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env}#{" -p #{unicorn_port}" if unicorn_port} -D"
           end
 
-          #
           # This will clean up any old unicorn servers left behind by the USR2 kill
           # command.
           #
           desc "Cleans up the old unicorn processes"
           task :cleanup, :roles => :app do
             find_servers(:roles => :app).each do |server|
-              run "touch #{unicorn_old_pid}", :hosts => [server]
-              pid = capture "cat #{unicorn_old_pid}", :hosts => [server]
-              run "kill -s QUIT #{pid.to_i}", :hosts => [server] if pid.to_i > 0
+              if unicorn_is_running?(server)
+                puts "Unicorn already running on #{server}"
+              else
+                run "touch #{unicorn_old_pid}", :hosts => [server]
+                pid = capture "cat #{unicorn_old_pid}", :hosts => [server]
+                run "kill -s QUIT #{pid.to_i}", :hosts => [server] if pid.to_i > 0
+              end
             end
           end
 
-          #
           # This will clean up any old unicorn servers left behind by the USR2 kill
           # command.
           #
@@ -101,8 +107,7 @@ module SimpleCapistranoUnicorn
             run "rm #{unicorn_old_pid}; rm #{unicorn_pid}"
           end
 
-          #
-          # Displays the unicorn log
+          # Displays the unicorn log.
           #
           desc "Displays the unicorn log"
           task :log, :roles => :app do
