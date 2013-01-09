@@ -2,22 +2,23 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "simple-capistrano-unicorn/version"
 
-Gem::Specification.new do |s|
-  s.name        = "simple-capistrano-unicorn"
-  s.version     = Capistrano::Unicorn::Methods::VERSION
-  s.authors     = ["Kasper Grubbe"]
-  s.email       = ["kaspergrubbe@gmail.com"]
-  s.homepage    = "http://kaspergrubbe.dk"
-  s.summary     = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
-  s.description = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
+Gem::Specification.new do |gem|
+  gem.name        = "simple-capistrano-unicorn"
+  gem.version     = Capistrano::Unicorn::Methods::VERSION
+  gem.authors     = ["Kasper Grubbe"]
+  gem.email       = ["kaspergrubbe@gmail.com"]
+  gem.homepage    = "http://kaspergrubbe.dk"
+  gem.summary     = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
+  gem.description = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
 
-  s.rubyforge_project = "simple-capistrano-unicorn"
+  gem.rubyforge_project = "simple-capistrano-unicorn"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.require_paths = ["lib"]
 
-  s.add_development_dependency "shell-spinner"
-  s.add_runtime_dependency "unicorn"
+  gem.add_development_dependency "shell-spinner"
+  gem.add_runtime_dependency "unicorn"
+  gem.add_runtime_dependency 'capistrano'
 end
