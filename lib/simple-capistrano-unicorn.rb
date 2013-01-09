@@ -1,0 +1,1 @@
+require "simple-capistrano-unicorn/version"
