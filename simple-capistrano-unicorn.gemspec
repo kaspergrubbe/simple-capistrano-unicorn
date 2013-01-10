@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.version     = Capistrano::Unicorn::Methods::VERSION
   gem.authors     = ["Kasper Grubbe"]
   gem.email       = ["kaspergrubbe@gmail.com"]
-  gem.homepage    = "http://kaspergrubbe.dk"
+  gem.homepage    = "http://github.com/kaspergrubbe/simple-capistrano-unicorn"
   gem.summary     = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
   gem.description = %q{Contains a collection of simple tasks to manage Unicorn with Capistrano.}
 
