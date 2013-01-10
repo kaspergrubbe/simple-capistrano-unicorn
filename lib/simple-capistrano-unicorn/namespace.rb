@@ -9,7 +9,6 @@ module SimpleCapistranoUnicorn
         _cset(:unicorn_pid)     { "#{shared_path}/pids/unicorn.pid" }
         _cset(:unicorn_old_pid) { "#{shared_path}/pids/unicorn.pid.oldbin" }
         _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
-        _cset(:unicorn_socket)  { "#{shared_path}/system/unicorn.sock" }
         _cset(:unicorn_log)     { "#{shared_path}/log/unicorn.stderr.log" }
         _cset(:use_bundler)     { true }
         _cset(:rails_env)       { "production" }
