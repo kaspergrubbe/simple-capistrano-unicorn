@@ -69,6 +69,5 @@ You can customize the gems behavior by setting any (or all) of the following opt
 * `unicorn_config` the path to the unicorn config file. Defaults to `"#{current_path}/config/unicorn.rb"`.
 * `unicorn_socket` indicates the place that Unicorn should place its socket file. Defaults to `"#{shared_path}/system/unicorn.sock"`.
 * `unicorn_log` the path where unicorn places its STDERR-log. Defaults to `"#{shared_path}/log/unicorn.stderr.log"`.
-* `unicorn_port` defines the port that unicorn should listen on. Defaults to `"3000"`.
 * `use_bundler` defines whether Unicorn should start with `bundle exec` or not. Default to `true`.
 * `rails_env` sets the environment that the server will run in. Defaults to `"production"`.

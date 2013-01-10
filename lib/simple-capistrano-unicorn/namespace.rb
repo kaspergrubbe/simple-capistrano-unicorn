@@ -11,7 +11,6 @@ module SimpleCapistranoUnicorn
         _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
         _cset(:unicorn_socket)  { "#{shared_path}/system/unicorn.sock" }
         _cset(:unicorn_log)     { "#{shared_path}/log/unicorn.stderr.log" }
-        _cset(:unicorn_port)    { '3000' }
         _cset(:use_bundler)     { true }
         _cset(:rails_env)       { "production" }
 
@@ -37,7 +36,7 @@ module SimpleCapistranoUnicorn
         end
 
         def start_unicorn(server)
-          run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env}#{" -p #{unicorn_port}" if unicorn_port} -D", :hosts => [server]
+          run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env} -D", :hosts => [server]
         end
 
         def clean_old_unicorn(server)
