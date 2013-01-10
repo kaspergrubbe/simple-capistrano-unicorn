@@ -1,3 +1,7 @@
+## v 0.0.3: Better documentation.
+
+Added better (correct!) documentation, and added possibility to use a different unicorn.stderr.log
+
 ## v 0.0.2: Initial release.
 
 Added better Capistrano bindings
