@@ -10,6 +10,7 @@ module SimpleCapistranoUnicorn
         _cset(:unicorn_old_pid) { "#{shared_path}/pids/unicorn.pid.oldbin" }
         _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
         _cset(:unicorn_socket)  { "#{shared_path}/system/unicorn.sock" }
+        _cset(:unicorn_log)     { "#{shared_path}/log/unicorn.stderr.log" }
         _cset(:unicorn_port)    { '3000' }
         _cset(:use_bundler)     { true }
         _cset(:rails_env)       { "production" }
@@ -120,7 +121,7 @@ module SimpleCapistranoUnicorn
           # command.
           #
           desc "Cleans up the old unicorn processes"
-          task :clean_unicorns, :roles => :app do
+          task :cleanup, :roles => :app do
             find_servers(:roles => :app).each do |server|
               clean_old_unicorn(server)
             end
