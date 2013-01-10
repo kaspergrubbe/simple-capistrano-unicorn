@@ -2,6 +2,8 @@
 
 Contains a namespace with methods for administrating the unicorn server through capistrano recipes.
 
+This gem is composed from the gems `capistrano-unicorn-methods` and `capistrano-unicorn`. It is roughly the structure of `capistrano-unicorn-methods` with clever ideas from `capistrano-unicorn`.
+
 ## Setup
 
 ### 1. Require this gem in deploy.rb
@@ -20,11 +22,19 @@ You should place this line in `RAILS_ROOT/config/deploy.rb`:
 after :deploy, "unicorn:restart"
 ```
 
-### 3. Extra step only for multi-stage setup
+### 3. Add unicorn.rb (only for single-stage setup)
+
+Grab the sample Unicorn configuration here: http://unicorn.bogomips.org/examples/unicorn.conf.rb
+
+And place it here: `RAILS_ROOT/config/unicorn.rb`
+
+### 4. Add unicorn stage files (only for multi-stage setup)
 
 Make sure that you are using the multi-stage extension for Capistrano ( https://github.com/capistrano/capistrano/wiki/2.x-Multistage-Extension )
 
-You should create different Unicorn files to use for each of your environments. The most common setup is to place the Unicorn files in `RAILS_ROOT/config/unicorn/{staging|beta|production}.rb`.
+You can get a sample of the Unicorn configuration here: http://unicorn.bogomips.org/examples/unicorn.conf.rb
+
+You should create different Unicorn files to use for each of your different environments. The most common setup is to place the Unicorn configuration files in `RAILS_ROOT/config/unicorn/{staging|beta|production}.rb`.
 
 You can then override the `unicorn_config`-variable that this gem is listening for, by placing this in `RAILS_ROOT/config/deploy.rb`:
 
