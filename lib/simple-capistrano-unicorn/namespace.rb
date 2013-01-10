@@ -43,7 +43,7 @@ module SimpleCapistranoUnicorn
         def clean_old_unicorn(server)
           if old_unicorn_is_running?(server)
             run "kill -s QUIT `cat #{unicorn_old_pid}`", :hosts => [server]
-            run "if [ -e #{unicorn_pid} ]; then rm #{unicorn_old_pid}; fi", :hosts => [server]
+            run "if [ -e #{unicorn_old_pid} ]; then rm #{unicorn_old_pid}; fi", :hosts => [server]
             logger.info nice_output("Cleaned up old Unicorn", server)
           end
         end
@@ -74,7 +74,7 @@ module SimpleCapistranoUnicorn
             find_servers(:roles => :app).each do |server|
               if unicorn_is_running?(server)
                 run "kill -s QUIT `cat #{unicorn_pid}`", :hosts => [server]
-                run "rm #{unicorn_pid}", :hosts => [server]
+                run "if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; fi", :hosts => [server]
                 logger.info nice_output("Stopped Unicorn!", server)
               else
                 logger.info nice_output("Unicorn _not_ running, nothing to stop!", server)
@@ -96,7 +96,7 @@ module SimpleCapistranoUnicorn
                 logger.info nice_output("Restarted Unicorn!", server)
               else
                 start_unicorn(server)
-                logger.info nice_output("Unicorn wasn't running, starting it!", server)
+                logger.info nice_output("Unicorn wasn't running, started it!", server)
               end
             end
           end
