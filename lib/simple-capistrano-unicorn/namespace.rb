@@ -14,7 +14,7 @@ module SimpleCapistranoUnicorn
         _cset(:rails_env)       { "production" }
 
         def process_running?(server, pidfile)
-          cmd = "if [ -e #{unicorn_pid} ]; then ps cax | grep `cat #{pidfile}` > /dev/null; if [ $? -eq 0 ]; then echo -n running; fi; fi"
+          cmd = "if [ -e #{pidfile} ]; then ps cax | grep `cat #{pidfile}` > /dev/null; if [ $? -eq 0 ]; then echo -n running; fi; fi"
           'running' == capture(cmd, :hosts => [server])
         end
 
@@ -40,7 +40,7 @@ module SimpleCapistranoUnicorn
 
         def clean_old_unicorn(server)
           if old_unicorn_is_running?(server)
-            run "kill -s QUIT `cat #{unicorn_old_pid}`", :hosts => [server]
+            run "if [ -e #{unicorn_old_pid} ]; then kill -s QUIT `cat #{unicorn_old_pid}`; fi", :hosts => [server]
             run "if [ -e #{unicorn_old_pid} ]; then rm #{unicorn_old_pid}; fi", :hosts => [server]
             logger.info nice_output("Cleaned up old Unicorn", server)
           end
@@ -71,7 +71,7 @@ module SimpleCapistranoUnicorn
           task :stop, :roles => :app do
             find_servers(:roles => :app).each do |server|
               if unicorn_is_running?(server)
-                run "kill -s QUIT `cat #{unicorn_pid}`", :hosts => [server]
+                run "if [ -e #{unicorn_pid} ]; then kill -s QUIT `cat #{unicorn_pid}`; fi", :hosts => [server]
                 run "if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; fi", :hosts => [server]
                 logger.info nice_output("Stopped Unicorn!", server)
               else
@@ -89,12 +89,13 @@ module SimpleCapistranoUnicorn
               if unicorn_is_running?(server)
                 pid = capture "cat #{unicorn_pid}", :hosts => [server]
                 run "kill -s USR2 #{pid.to_i}", :hosts => [server] if pid.to_i > 0
-                sleep(1)
-                clean_old_unicorn(server)
+                sleep(5)
                 logger.info nice_output("Restarted Unicorn!", server)
+                clean_old_unicorn(server)
               else
+                logger.info nice_output("Unicorn wasn't running, starting it!", server)
                 start_unicorn(server)
-                logger.info nice_output("Unicorn wasn't running, started it!", server)
+                logger.info nice_output("Started Unicorn!", server)
               end
             end
           end
