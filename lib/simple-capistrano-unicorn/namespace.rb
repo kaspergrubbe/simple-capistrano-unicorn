@@ -12,6 +12,7 @@ module SimpleCapistranoUnicorn
         _cset(:unicorn_log)     { "#{shared_path}/log/unicorn.stderr.log" }
         _cset(:use_bundler)     { true }
         _cset(:rails_env)       { "production" }
+        _cset(:unicorn_command) { "unicorn" }
 
         def process_running?(server, pidfile)
           cmd = "if [ -e #{pidfile} ]; then ps cax | grep `cat #{pidfile}` > /dev/null; if [ $? -eq 0 ]; then echo -n running; fi; fi"
@@ -35,7 +36,7 @@ module SimpleCapistranoUnicorn
         end
 
         def start_unicorn(server)
-          run "cd #{current_path}; #{'bundle exec' if use_bundler} unicorn -c #{unicorn_config} -E #{rails_env} -D", :hosts => [server]
+          run "cd #{current_path}; #{'bundle exec' if use_bundler} #{unicorn_command} -c #{unicorn_config} -E #{rails_env} -D", :hosts => [server]
         end
 
         def clean_old_unicorn(server)

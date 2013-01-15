@@ -70,3 +70,4 @@ You can customize the gems behavior by setting any (or all) of the following opt
 * `unicorn_log` the path where unicorn places its STDERR-log. Defaults to `"#{shared_path}/log/unicorn.stderr.log"`.
 * `use_bundler` defines whether Unicorn should start with `bundle exec` or not. Default to `true`.
 * `rails_env` sets the environment that the server will run in. Defaults to `"production"`.
+* `unicorn_command` lets you specify the Unicorn command if you want to use `unicorn_rails`. Defaults to `"unicorn"`.
