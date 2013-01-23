@@ -126,6 +126,17 @@ module SimpleCapistranoUnicorn
               clean_old_unicorn(server)
             end
           end
+
+          desc "Prints out variables that this gem listens for"
+          task :debug do
+            logger.info "unicorn_pid:\t#{fetch(:unicorn_pid)}"
+            logger.info "unicorn_old_pid:\t#{fetch(:unicorn_old_pid)}"
+            logger.info "unicorn_config:\t#{fetch(:unicorn_config)}"
+            logger.info "unicorn_log:\t#{fetch(:unicorn_log)}"
+            logger.info "use_bundler:\t#{fetch(:use_bundler)}"
+            logger.info "rails_env:   \t#{fetch(:rails_env)}"
+            logger.info "unicorn_command:\t#{fetch(:unicorn_command)}"
+          end
         end
       end
     end

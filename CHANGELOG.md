@@ -1,3 +1,5 @@
+## v 0.0.6: Added a debug-task to see which variables this gem sees
+
 ## v 0.0.5: Lets the user specify Unicorn command. 
 
 ## v 0.0.4: Removal of unused variables, and making sure that we don't try to delete pids that aren't there.
