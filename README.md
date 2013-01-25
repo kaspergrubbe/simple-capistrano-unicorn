@@ -6,7 +6,13 @@ This gem is composed from the gems `capistrano-unicorn-methods` and `capistrano-
 
 ## Setup
 
-### 1. Require this gem in deploy.rb
+### 1. Add Gem to Gemfile
+
+```
+gem 'simple-capistrano-unicorn'
+```
+
+### 2. Require this gem in deploy.rb
 
 You should add this line in the bottom of `RAILS_ROOT/config/deploy.rb`:
 
@@ -14,7 +20,7 @@ You should add this line in the bottom of `RAILS_ROOT/config/deploy.rb`:
 require 'simple-capistrano-unicorn'
 ```
 
-### 2. Restart Unicorn on deploy
+### 3. Restart Unicorn on deploy
 
 You should place this line in `RAILS_ROOT/config/deploy.rb`:
 
@@ -22,13 +28,13 @@ You should place this line in `RAILS_ROOT/config/deploy.rb`:
 after :deploy, "unicorn:restart"
 ```
 
-### 3. Add unicorn.rb (only for single-stage setup)
+### 4. Add unicorn.rb (only for single-stage setup)
 
 Grab the sample Unicorn configuration here: http://unicorn.bogomips.org/examples/unicorn.conf.rb
 
 And place it here: `RAILS_ROOT/config/unicorn.rb`
 
-### 4. Add unicorn stage files (only for multi-stage setup)
+### 5. Add unicorn stage files (only for multi-stage setup)
 
 Make sure that you are using the multi-stage extension for Capistrano ( https://github.com/capistrano/capistrano/wiki/2.x-Multistage-Extension )
 
