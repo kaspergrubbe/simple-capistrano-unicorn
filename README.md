@@ -8,7 +8,7 @@ This gem is composed from the gems `capistrano-unicorn-methods` and `capistrano-
 
 ### 1. Add Gem to Gemfile
 
-```
+```ruby
 gem 'simple-capistrano-unicorn'
 ```
 
@@ -16,7 +16,7 @@ gem 'simple-capistrano-unicorn'
 
 You should add this line in the bottom of `RAILS_ROOT/config/deploy.rb`:
 
-```
+```ruby
 require 'simple-capistrano-unicorn'
 ```
 
@@ -24,7 +24,7 @@ require 'simple-capistrano-unicorn'
 
 You should place this line in `RAILS_ROOT/config/deploy.rb`:
 
-```
+```ruby
 after :deploy, "unicorn:restart"
 ```
 
@@ -44,7 +44,7 @@ You should create different Unicorn files to use for each of your different envi
 
 You can then override the `unicorn_config`-variable that this gem is listening for, by placing this in `RAILS_ROOT/config/deploy.rb`:
 
-```
+```ruby
 set(:unicorn_config) { "#{fetch(:current_path)}/config/unicorn/#{fetch(:stage)}.rb" }
 ```
 
