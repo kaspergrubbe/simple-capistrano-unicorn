@@ -10,6 +10,7 @@ module SimpleCapistranoUnicorn
         _cset(:unicorn_old_pid) { "#{shared_path}/pids/unicorn.pid.oldbin" }
         _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
         _cset(:unicorn_log)     { "#{shared_path}/log/unicorn.stderr.log" }
+        _cset(:unicorn_suicide) { false }
         _cset(:use_bundler)     { true }
         _cset(:rails_env)       { "production" }
         _cset(:unicorn_command) { "unicorn" }
@@ -97,7 +98,8 @@ module SimpleCapistranoUnicorn
                 logger.info nice_output("Started Unicorn!", server)
               end
             end
-            unicorn.cleanup
+            # Only clean-up if unicorn don't kill its old master
+            unicorn.cleanup unless unicorn_suicide
           end
 
           desc "Restart of Unicorn with downtime"
@@ -132,6 +134,7 @@ module SimpleCapistranoUnicorn
             logger.info "unicorn_pid:\t#{fetch(:unicorn_pid)}"
             logger.info "unicorn_old_pid:\t#{fetch(:unicorn_old_pid)}"
             logger.info "unicorn_config:\t#{fetch(:unicorn_config)}"
+            logger.info "unicorn_suicide:\t#{fetch(:unicorn_suicide)}"
             logger.info "unicorn_log:\t#{fetch(:unicorn_log)}"
             logger.info "use_bundler:\t#{fetch(:use_bundler)}"
             logger.info "rails_env:   \t#{fetch(:rails_env)}"
