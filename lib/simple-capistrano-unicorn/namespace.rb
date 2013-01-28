@@ -90,15 +90,14 @@ module SimpleCapistranoUnicorn
               if unicorn_is_running?(server)
                 pid = capture "cat #{unicorn_pid}", :hosts => [server]
                 run "kill -s USR2 #{pid.to_i}", :hosts => [server] if pid.to_i > 0
-                sleep(5)
                 logger.info nice_output("Restarted Unicorn!", server)
-                clean_old_unicorn(server)
               else
                 logger.info nice_output("Unicorn wasn't running, starting it!", server)
                 start_unicorn(server)
                 logger.info nice_output("Started Unicorn!", server)
               end
             end
+            unicorn.cleanup
           end
 
           desc "Restart of Unicorn with downtime"
@@ -122,6 +121,7 @@ module SimpleCapistranoUnicorn
           #
           desc "Cleans up the old unicorn processes"
           task :cleanup, :roles => :app do
+            logger.info "Cleaning up old Unicorns.."
             find_servers(:roles => :app).each do |server|
               clean_old_unicorn(server)
             end
