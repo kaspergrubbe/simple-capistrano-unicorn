@@ -81,7 +81,7 @@ module SimpleCapistranoUnicorn
             end
           end
 
-          # Restarts the unicorn process(es) with the URS2 code, to gracefully
+          # Restarts the unicorn process(es) with the USR2 code, to gracefully
           # create a new server, and kill of the old one, leaving *no* downtime.
           #
           desc "Zero-downtime restart of Unicorn"
