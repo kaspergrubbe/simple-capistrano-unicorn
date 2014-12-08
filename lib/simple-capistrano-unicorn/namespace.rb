@@ -52,7 +52,7 @@ module SimpleCapistranoUnicorn
           # Starts the unicorn process(es)
           #
           desc "Starts unicorn"
-          task :start, :roles => :app do            
+          task :start, :roles => :app do
             find_servers(:roles => :app).each do |server|
               clean_old_unicorn(server)
 
