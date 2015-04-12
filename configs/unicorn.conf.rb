@@ -59,6 +59,12 @@ GC.respond_to?(:copy_on_write_friendly=) and
 # fast LAN.
 check_client_connection false
 
+# Forcibly clean environment variables between bundlings
+# http://www.mail-archive.com/mongrel-unicorn@rubyforge.org/msg00276.html
+before_exec do |server|
+  ENV["BUNDLE_GEMFILE"] = "#{app_dir}/current/Gemfile"
+end
+
 before_fork do |server, worker|
   # the following is highly recomended for Rails + "preload_app true"
   # as there's no need for the master process to hold a connection
