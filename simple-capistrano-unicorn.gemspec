@@ -22,4 +22,5 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency "unicorn"
   gem.add_runtime_dependency 'capistrano', '~> 2.15'
+  gem.add_runtime_dependency 'colorize', '~> 0.7.5'
 end
