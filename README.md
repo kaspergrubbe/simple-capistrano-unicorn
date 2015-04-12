@@ -34,9 +34,9 @@ Grab the sample Unicorn configuration here: https://github.com/kaspergrubbe/simp
 
 And place it here: `RAILS_ROOT/config/unicorn.rb` change the `app_root` variable if you deploy user isn't named `deployer`.
 
-#### 4.1 Should my Unicorn suicide or not?
+#### 4.1 Suicidal Unicorn
 
-My prefered way of killing off Unicorns is to let Unicorn kill it old master after forking, this means that workers is up when you kill off the old master. If you use the sample unicorn config described here, Unicorn is doing exactly this. You can see it by this:
+My prefered way of killing off Unicorns is to let Unicorn kill it old master after forking, this means that workers is up when you kill off the old master. If you use the sample unicorn config described here, Unicorn is doing exactly this. You can set it by this:
 
 ```ruby
 after_fork do |server, worker|
@@ -52,12 +52,6 @@ after_fork do |server, worker|
     end
   end
 end
-```
-
-If you want Unicorn to suicide, set this variable in your `deploy.rb`-file:
-
-```ruby
-set(:unicorn_suicide) { true }
 ```
 
 ### 5. Add unicorn stage files (only for multi-stage setup)
@@ -83,7 +77,7 @@ The gem gives you access to the following methods within the `unicorn.<method>` 
 * `unicorn.start` starts the Unicorn processes
 * `unicorn.stop` stops the Unicorn processes
 * `unicorn.restart` makes a seamless zero-downtime restart
-* `unicorn.hard_restart` basically runs `unicorn.stop` followed with a `unicorn.start` 
+* `unicorn.hard_restart` basically runs `unicorn.stop` followed with a `unicorn.start`
 * `unicorn.log` prints out from the Unicorn log in `tail -f`-like fashion
 * `unicorn.cleanup` removes the old running Unicorn master
 
@@ -97,10 +91,7 @@ The gem gives you access to the following methods within the `unicorn.<method>` 
 You can customize the gems behavior by setting any (or all) of the following options within capistrano's configuration:
 
 * `unicorn_pid` indicates the path for the pid file. Defaults to `"#{shared_path}/pids/unicorn.pid"`.
-* `unicorn_suicide` indicates whether Unicorn kills it own master after forking or not. Defaults to `false`.
 * `unicorn_old_pid` indicates the path for the old pid file, which Unicorn creates when forking a new master. Defaults to `#{shared_path}/pids/unicorn.pid.oldbin`.
 * `unicorn_config` the path to the unicorn config file. Defaults to `"#{current_path}/config/unicorn.rb"`.
 * `unicorn_log` the path where unicorn places its STDERR-log. Defaults to `"#{shared_path}/log/unicorn.stderr.log"`.
-* `use_bundler` defines whether Unicorn should start with `bundle exec` or not. Default to `true`.
 * `rails_env` sets the environment that the server will run in. Defaults to `"production"`.
-* `unicorn_command` lets you specify the Unicorn command if you want to use `unicorn_rails`. Defaults to `"unicorn"`.
