@@ -1,8 +1,6 @@
 require 'capistrano'
 require 'capistrano/version'
 
-require 'colorize'
-
 module SimpleCapistranoUnicorn
   class CapistranoIntegration
     def self.load_into(capistrano_config)
@@ -28,7 +26,7 @@ module SimpleCapistranoUnicorn
         end
 
         def nice_output(output, server = nil)
-          "#{server.to_s.ljust(20) if server} #{output}".colorize(:blue)
+          "#{server.to_s.ljust(20) if server} #{output}"
         end
 
         def start_unicorn(server)
@@ -77,95 +75,95 @@ module SimpleCapistranoUnicorn
             STDOUT.sync
 
             # 0. PRINT STATUS OF ALL APP-SERVERS AND UNICORN STATUTES
-            print "Deploying to these app-servers:\n".colorize(:light_white).bold
+            print "Deploying to these app-servers:\n"
             find_servers(:roles => :app).each do |server|
               if unicorn_is_running?(server)
-                print "♞".colorize(:green)
+                print "♞"
               else
-                print "♞".colorize(:red)
+                print "♞"
               end
-              print " -#{server.host}\n".colorize(:white)
+              print " -#{server.host}\n"
             end
 
             # 1. MAKES SURE ALL SERVERS ARE RUNNING!
-            print "Making sure all servers are running".colorize(:light_white).bold
-            print ".......|".colorize(:white)
+            print "Making sure all servers are running"
+            print ".......|"
             find_servers(:roles => :app).each do |server|
               unless unicorn_is_running?(server)
                 start_unicorn(server)
                 logger.info nice_output("Started Unicorn!", server)
-                print ".".colorize(:yellow)
+                print "."
               else
-                print ".".colorize(:green)
+                print "."
               end
             end
-            print "✓\n".colorize(:green).bold
+            print "✓\n"
 
             # 2. MAKE ALL SERVERS RELOAD THE NEW CODE!
-            print "Reloading new code (USR2)".colorize(:light_white).bold
-            print ".................|".colorize(:white)
+            print "Reloading new code (USR2)"
+            print ".................|"
             sleep(10)
             find_servers(:roles => :app).each do |server|
               pid = capture("cat #{unicorn_pid}", :hosts => [server]).to_i
               run "kill -s USR2 #{pid}", :hosts => [server]
-              print ".".colorize(:green)
+              print "."
             end
-            print "✓\n".colorize(:green).bold
+            print "✓\n"
 
             # 3. MAKE ALL SERVERS STOP SENDING TRAFFIC TO OLD MASTER
-            print "Killing workers from old masters (WINCH)".colorize(:light_white).bold
-            print "..|".colorize(:white)
+            print "Killing workers from old masters (WINCH)"
+            print "..|"
             sleep(10)
             find_servers(:roles => :app).each do |server|
               old_pid = capture("cat #{unicorn_old_pid}", :hosts => [server]).to_i
               run "kill -s WINCH #{old_pid}", :hosts => [server]
-              print ".".colorize(:green)
+              print "."
             end
-            print "✓\n".colorize(:green).bold
+            print "✓\n"
 
             # 3.1 ALL TRAFFIC GOES TO NEW SERVERS, WANT TO KILL OLD?
             while(true)
-              print "Traffic is handled by new master, are you happy (y/n)? ".colorize(:white)
+              print "Traffic is handled by new master, are you happy (y/n)? "
               answer = STDIN.gets.downcase.gsub("\n",'')
               break if ['y','n'].include?(answer)
             end
 
             if answer == 'y'
               # 4.1 NOW ALL OLD WORKERS ARE DOwN! KILL OLD MASTER!
-              print "Killing old masters (QUIT)".colorize(:light_white).bold
-              print "................|".colorize(:white)
+              print "Killing old masters (QUIT)"
+              print "................|"
               sleep(10)
               find_servers(:roles => :app).each do |server|
                 old_pid = capture("cat #{unicorn_old_pid}", :hosts => [server]).to_i
                 run "kill -s QUIT #{old_pid}", :hosts => [server]
-                print ".".colorize(:green)
+                print "."
               end
-              print "✓\n".colorize(:green).bold
+              print "✓\n"
 
-              print ".. code deployed!\n".colorize(:white).bold
+              print ".. code deployed!\n"
             else
               # 4.2 DEPLOY WENT WRONG, GO BACK
-              print "Reloading old master! (HUP)".colorize(:light_white).bold
-              print "...............|".colorize(:white)
+              print "Reloading old master! (HUP)"
+              print "...............|"
               sleep(10)
               find_servers(:roles => :app).each do |server|
                 old_pid = capture("cat #{unicorn_old_pid}", :hosts => [server]).to_i
                 run "kill -s HUP #{old_pid}", :hosts => [server]
-                print ".".colorize(:green)
+                print "."
               end
-              print "✓\n".colorize(:green).bold
+              print "✓\n"
 
-              print "Killing new master! (QUIT)".colorize(:light_white).bold
-              print "................|".colorize(:white)
+              print "Killing new master! (QUIT)"
+              print "................|"
               sleep(10)
               find_servers(:roles => :app).each do |server|
                 pid = capture("cat #{unicorn_pid}", :hosts => [server]).to_i
                 run "kill -s QUIT #{pid}", :hosts => [server]
-                print ".".colorize(:green)
+                print "."
               end
-              print "✓\n".colorize(:green).bold
+              print "✓\n"
 
-              print ".. code _NOT_ deployed!\n".colorize(:red).bold
+              print ".. code _NOT_ deployed!\n"
             end
           end
 
