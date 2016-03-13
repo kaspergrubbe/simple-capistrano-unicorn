@@ -4,7 +4,7 @@ require "simple-capistrano-unicorn/version"
 
 Gem::Specification.new do |gem|
   gem.name        = "simple-capistrano-unicorn"
-  gem.version     = Capistrano::Unicorn::Methods::VERSION
+  gem.version     = '1.0.0'
   gem.authors     = ["Kasper Grubbe"]
   gem.email       = ["kaspergrubbe@gmail.com"]
   gem.homepage    = "http://github.com/kaspergrubbe/simple-capistrano-unicorn"
