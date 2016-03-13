@@ -22,5 +22,4 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency "unicorn"
   gem.add_runtime_dependency 'capistrano', '~> 3.4.0'
-
 end
