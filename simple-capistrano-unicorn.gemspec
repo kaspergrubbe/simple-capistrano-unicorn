@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "simple-capistrano-unicorn/version"
 
 Gem::Specification.new do |gem|
   gem.name        = "simple-capistrano-unicorn"
