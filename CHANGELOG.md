@@ -1,3 +1,5 @@
+## v 1.0.0: Rewrite to Capistrano v3
+
 ## v 0.0.9: Lock gem dependencies to use Capistrano v2 until we can rewrite to Capistrano v3.
 
 ## v 0.0.6: Added a debug-task to see which variables this gem sees

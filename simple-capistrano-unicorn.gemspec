@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "simple-capistrano-unicorn/version"
 
 Gem::Specification.new do |gem|
   gem.name        = "simple-capistrano-unicorn"
-  gem.version     = Capistrano::Unicorn::Methods::VERSION
+  gem.version     = '1.0.0'
   gem.authors     = ["Kasper Grubbe"]
   gem.email       = ["kaspergrubbe@gmail.com"]
   gem.homepage    = "http://github.com/kaspergrubbe/simple-capistrano-unicorn"
@@ -21,5 +20,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake"
 
   gem.add_runtime_dependency "unicorn"
-  gem.add_runtime_dependency 'capistrano', '~> 2.15'
+  gem.add_runtime_dependency 'capistrano', '~> 3.4.0'
 end

@@ -1,0 +1,123 @@
+namespace :unicorn do
+
+  def process_running?(pidfile)
+    cmd = "if [ -e #{pidfile} ]; then ps cax | grep `cat #{pidfile}` > /dev/null; if [ $? -eq 0 ]; then echo -n running; fi; fi"
+    'running' == capture(cmd)
+  end
+
+  def unicorn_is_running?(pidfile)
+    process_running?(pidfile)
+  end
+
+  def start_unicorn
+    within release_path do
+      execute *%W[bundle exec unicorn -c #{unicorn_config} -E #{rack_env} -D]
+    end
+  end
+
+  def update_progress(msg)
+    logger = SSHKit.config.output
+    logger << SSHKit::LogMessage.new(Logger::INFO, "Unicorn | #{msg}")
+  end
+
+  # Starts the unicorn process(es)
+  #
+  desc "Starts unicorn"
+  task :start do
+    on roles(:app) do |server|
+      if unicorn_is_running?(unicorn_pid)
+        update_progress("Unicorn already running on #{server.hostname}")
+      else
+        # Unicorn is not running, remove the pid-file if it exists
+        execute("if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; fi")
+        start_unicorn
+        update_progress("Started Unicorn!")
+      end
+    end
+  end
+
+  # This will quit the unicorn process(es).
+  #
+  desc "Stop unicorn"
+  task :stop do
+    on roles(:app) do |server|
+      if unicorn_is_running?(unicorn_pid)
+        execute "if [ -e #{unicorn_pid} ]; then kill -s QUIT `cat #{unicorn_pid}`; fi"
+        update_progress "Stopped Unicorn on #{server.hostname}!"
+      else
+        update_progress "Unicorn _not_ running, nothing to stop!"
+      end
+    end
+  end
+
+  # Restarts the unicorn process(es) with the USR2 signal, to gracefully
+  # create a new server, and kill of the old one, leaving *no* downtime.
+  #
+  # It's following the: http://unicorn.bogomips.org/SIGNALS.html
+  #
+  desc "Zero-downtime restart of Unicorn"
+  task :restart do
+    # 1. MAKES SURE ALL SERVERS ARE RUNNING!
+    update_progress "Making sure all servers are running Unicorn"
+    on roles(:app) do |server|
+      unless unicorn_is_running?(unicorn_pid)
+        start_unicorn
+      end
+    end
+
+    # 2. MAKE ALL SERVERS RELOAD THE NEW CODE!
+    update_progress "Reloading new code (USR2)"
+    sleep(10)
+    on roles(:app) do |server|
+      pid = capture("cat #{unicorn_pid}").to_i
+      execute "kill -s USR2 #{pid}"
+    end
+
+    # 3. MAKE ALL SERVERS STOP SENDING TRAFFIC TO OLD MASTER
+    update_progress "Killing workers started from old masters (WINCH)"
+    sleep(10)
+    on roles(:app) do |server|
+      old_pid = capture("cat #{unicorn_old_pid}").to_i
+      execute "kill -s WINCH #{old_pid}"
+    end
+
+    # 3.1 ALL TRAFFIC GOES TO NEW SERVERS, KILL OLD
+    update_progress "All traffic is now handled by new master, now smile!"
+
+    # 4. NOW ALL OLD WORKERS ARE DOwN! KILL OLD MASTER!
+    update_progress "Killing old masters (QUIT)"
+    sleep(10)
+    on roles(:app) do |server|
+      old_pid = capture("cat #{unicorn_old_pid}").to_i
+      execute "kill -s QUIT #{old_pid}"
+    end
+    update_progress ".. code deployed!\n"
+  end
+
+  desc "Restart of Unicorn with downtime"
+  task :hard_restart do
+    invoke 'unicorn:stop'
+    sleep(1)
+    invoke 'unicorn:start'
+  end
+
+  def unicorn_pid
+    fetch(:unicorn_pid, "#{shared_path}/tmp/pids/unicorn.pid")
+  end
+
+  def unicorn_old_pid
+    fetch(:unicorn_old_pid, "#{shared_path}/tmp/pids/unicorn.pid.oldbin")
+  end
+
+  def unicorn_config
+    fetch(:unicorn_config, "#{current_path}/config/unicorn.rb")
+  end
+
+  def unicorn_log
+    fetch(:unicorn_log, "#{shared_path}/log/unicorn.stderr.log")
+  end
+
+  def rack_env
+    fetch(:rack_env, 'production')
+  end
+end
