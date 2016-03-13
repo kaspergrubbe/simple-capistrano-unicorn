@@ -19,6 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "rake", '~> 0'
 
-  gem.add_runtime_dependency "unicorn", '~> 0'
+  gem.add_runtime_dependency "unicorn", '~> 5'
   gem.add_runtime_dependency 'capistrano', '~> 3.4'
 end
