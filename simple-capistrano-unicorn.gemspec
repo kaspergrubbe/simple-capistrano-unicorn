@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name        = "simple-capistrano-unicorn"
-  gem.version     = '1.0.1'
+  gem.version     = '1.0.2'
   gem.authors     = ["Kasper Grubbe"]
   gem.email       = ["kaspergrubbe@gmail.com"]
   gem.homepage    = "http://github.com/kaspergrubbe/simple-capistrano-unicorn"
