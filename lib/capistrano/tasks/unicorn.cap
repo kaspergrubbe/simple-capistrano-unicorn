@@ -15,18 +15,23 @@ namespace :unicorn do
     end
   end
 
+  def update_progress(msg)
+    logger = SSHKit.config.output
+    logger << SSHKit::LogMessage.new(Logger::INFO, "Unicorn | #{msg}")
+  end
+
   # Starts the unicorn process(es)
   #
   desc "Starts unicorn"
   task :start do
     on roles(:app) do |server|
       if unicorn_is_running?(unicorn_pid)
-        puts("Unicorn already running on #{server.hostname}")
+        update_progress("Unicorn already running on #{server.hostname}")
       else
         # Unicorn is not running, remove the pid-file if it exists
         execute("if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; fi")
         start_unicorn
-        puts("Started Unicorn!")
+        update_progress("Started Unicorn!")
       end
     end
   end
@@ -38,9 +43,9 @@ namespace :unicorn do
     on roles(:app) do |server|
       if unicorn_is_running?(unicorn_pid)
         execute "if [ -e #{unicorn_pid} ]; then kill -s QUIT `cat #{unicorn_pid}`; fi"
-        puts "Stopped Unicorn on #{server.hostname}!"
+        update_progress "Stopped Unicorn on #{server.hostname}!"
       else
-        puts "Unicorn _not_ running, nothing to stop!"
+        update_progress "Unicorn _not_ running, nothing to stop!"
       end
     end
   end
@@ -52,70 +57,41 @@ namespace :unicorn do
   #
   desc "Zero-downtime restart of Unicorn"
   task :restart do
-    STDOUT.sync
-
-    # 0. PRINT STATUS OF ALL APP-SERVERS AND UNICORN STATUTES
-    print "Deploying to these app-servers:\n"
-    on roles(:app) do |server|
-      if unicorn_is_running?(unicorn_pid)
-        print "♞"
-      else
-        print "♞"
-      end
-      print " -#{server.hostname}\n"
-    end
-
     # 1. MAKES SURE ALL SERVERS ARE RUNNING!
-    print "Making sure all servers are running"
-    print ".......|"
+    update_progress "Making sure all servers are running Unicorn"
     on roles(:app) do |server|
       unless unicorn_is_running?(unicorn_pid)
         start_unicorn
-        puts "Started Unicorn #{server.hostname}!"
-        print "."
-      else
-        print "."
       end
     end
-    print "✓\n"
 
     # 2. MAKE ALL SERVERS RELOAD THE NEW CODE!
-    print "Reloading new code (USR2)"
-    print ".................|"
+    update_progress "Reloading new code (USR2)"
     sleep(10)
     on roles(:app) do |server|
       pid = capture("cat #{unicorn_pid}").to_i
       execute "kill -s USR2 #{pid}"
-      print "."
     end
-    print "✓\n"
 
     # 3. MAKE ALL SERVERS STOP SENDING TRAFFIC TO OLD MASTER
-    print "Killing workers from old masters (WINCH)"
-    print "..|"
+    update_progress "Killing workers started from old masters (WINCH)"
     sleep(10)
     on roles(:app) do |server|
       old_pid = capture("cat #{unicorn_old_pid}").to_i
       execute "kill -s WINCH #{old_pid}"
-      print "."
     end
-    print "✓\n"
 
     # 3.1 ALL TRAFFIC GOES TO NEW SERVERS, KILL OLD
-    print "Traffic is now handled by new master, I hope you are happy."
+    update_progress "All traffic is now handled by new master, now smile!"
 
     # 4. NOW ALL OLD WORKERS ARE DOwN! KILL OLD MASTER!
-    print "Killing old masters (QUIT)"
-    print "................|"
+    update_progress "Killing old masters (QUIT)"
     sleep(10)
     on roles(:app) do |server|
       old_pid = capture("cat #{unicorn_old_pid}").to_i
       execute "kill -s QUIT #{old_pid}"
-      print "."
     end
-    print "✓\n"
-
-    print ".. code deployed!\n"
+    update_progress ".. code deployed!\n"
   end
 
   desc "Restart of Unicorn with downtime"
@@ -144,5 +120,4 @@ namespace :unicorn do
   def rack_env
     fetch(:rack_env, 'production')
   end
-
 end
