@@ -17,7 +17,7 @@ gem 'simple-capistrano-unicorn'
 You should add this line to your `Capfile`:
 
 ```ruby
-require 'simple-capistrano-unicorn'
+require 'capistrano/simple-capistrano-unicorn'
 ```
 
 ### 3. Restart Unicorn on deploy
